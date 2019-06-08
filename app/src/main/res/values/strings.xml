@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ProyectoBasura</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="cart_n">Cartón</string>
+    <string name="plastico">Plástico</string>
+    <string name="metal">Metal</string>
+    <string name="papel">Papel</string>
+    <string name="tipo_de_residuo">Tipo de residuo</string>
+</resources>
