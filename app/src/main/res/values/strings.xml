@@ -1,9 +1,21 @@
 <resources>
     <string name="app_name">ProyectoBasura</string>
     <string name="title_activity_maps">Map</string>
-    <string name="cart_n">Cartón</string>
+    <string name="carton">Cartón</string>
     <string name="plastico">Plástico</string>
     <string name="metal">Metal</string>
     <string name="papel">Papel</string>
     <string name="tipo_de_residuo">Tipo de residuo</string>
+    <string name="filtrarMapa">Filtrar mapa</string>
+    <string name="generarRuta">¡Generar ruta!</string>
+    <string name="title_activity_main">Inicio de Sesión</string>
+    <string name="recolector">Recolector</string>
+    <string name="ciudadano">Ciudadano</string>
+    <string name="bienvenida">Bienvenido :)</string>
+    <string name="ciudadanoDonar">Donar residuos</string>
+    <string name="ciudadanoTipoResiduo">Tipo de residuo</string>
+    <string name="ciudadnoPeso">Peso estimado</string>
+    <string name="ciudadanoBotonMarcar">Marcar Posición</string>
+    <string name="ciudadanoDeslza">Desliza para indicar el peso</string>
+
 </resources>

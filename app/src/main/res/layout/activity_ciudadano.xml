@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CiudadanoActivity"
+    android:id="@+id/ciudadanoLayout"
+    android:backgroundTint="@color/fondo">
+
+    <Button
+        android:id="@+id/btnMarcarPosicion"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginBottom="284dp"
+        android:text="@string/ciudadanoBotonMarcar" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="182dp"
+        android:layout_marginRight="182dp"
+        android:layout_marginBottom="298dp"
+        android:text="@string/ciudadanoDonar"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="25sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="110dp"
+        android:layout_marginRight="110dp"
+        android:layout_marginBottom="237dp"
+        android:text="@string/ciudadanoTipoResiduo"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="200sp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/idRadioPlastico"
+            android:layout_width="108dp"
+            android:layout_height="wrap_content"
+            android:text="@string/plastico" />
+
+        <RadioButton
+            android:id="@+id/idRadioCarton"
+            android:layout_width="102dp"
+            android:layout_height="wrap_content"
+            android:text="@string/carton" />
+
+        <RadioButton
+            android:id="@+id/idRadioPapel"
+            android:layout_width="78dp"
+            android:layout_height="match_parent"
+            android:text="@string/papel" />
+
+        <RadioButton
+            android:id="@+id/idRadioMetal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/metal" />
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="110dp"
+        android:layout_marginRight="110dp"
+        android:layout_marginBottom="157dp"
+        android:text="@string/ciudadnoPeso"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/seekbar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="240dp"
+        android:layout_height="31dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="61dp"
+        android:layout_marginRight="61dp"
+        android:layout_marginBottom="119dp"
+        android:max="10"
+        android:progress="0" />
+
+    <TextView
+        android:id="@+id/textoSeekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="89dp"
+        android:layout_marginRight="89dp"
+        android:layout_marginBottom="89dp"
+        android:text="@string/ciudadanoDeslza"
+        android:textSize="15sp" />
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="301dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="342dp"
+        tools:context=".MapsActivity" />
+
+    <Button
+        android:id="@+id/btnCiudadanoEnviar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="17dp"
+        android:text="Enviar" />
+
+
+</RelativeLayout>

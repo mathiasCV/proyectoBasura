@@ -1,79 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mapLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:outlineSpotShadowColor="#00E90B0B">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="142dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="-2dp"
+        android:layout_marginLeft="-2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="179dp"
+        android:text="@string/tipo_de_residuo"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        tools:text="@string/tipo_de_residuo" />
+
+
+    <CheckBox
+        android:id="@+id/opcionPlastico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="7dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginBottom="140dp"
+        android:layout_toStartOf="@+id/opcionPapel"
+        android:layout_toLeftOf="@+id/opcionPapel"
+        android:text="@string/plastico"
+        android:textColor="#E9D054" />
+
+    <CheckBox
+        android:id="@+id/opcionMetal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="140dp"
+        android:text="@string/metal"
+        android:textColor="#C427DF" />
+
+    <CheckBox
+        android:id="@+id/opcionPapel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginBottom="140dp"
+        android:layout_toStartOf="@+id/opcionCarton"
+        android:layout_toLeftOf="@+id/opcionCarton"
+        android:text="@string/papel"
+        android:textColor="#2196F3" />
+
+    <CheckBox
+        android:id="@+id/opcionCarton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="140dp"
+        android:layout_toStartOf="@+id/opcionMetal"
+        android:layout_toLeftOf="@+id/opcionMetal"
+        android:text="@string/carton"
+        android:textColor="#4BE224" />
+
+    <Button
+        android:id="@+id/btnFiltrarMapa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="27dp"
+        android:layout_marginLeft="27dp"
+        android:layout_marginEnd="51dp"
+        android:layout_marginRight="51dp"
+        android:layout_marginBottom="50dp"
+        android:layout_toStartOf="@+id/btnGenerarRuta"
+        android:layout_toLeftOf="@+id/btnGenerarRuta"
+        android:text="@string/filtrarMapa" />
+
+    <Button
+        android:id="@+id/btnGenerarRuta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="27dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginBottom="50dp"
+        android:text="@string/generarRuta" />
 
     <fragment
         android:id="@+id/map"
-        class="com.google.android.gms.maps.SupportMapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="569dp" />
+        android:layout_height="519dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="214dp"
+        tools:context=".MapsActivity" />
 
-    <LinearLayout
-        android:id="@+id/options"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#00A02C2C"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tipo de resudio"
-            android:textColor="#00BCD4" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/option1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Papel" />
-
-            <RadioButton
-                android:id="@+id/option2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Plástico" />
-
-            <RadioButton
-                android:id="@+id/option3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/metal" />
-
-            <RadioButton
-                android:id="@+id/option4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Chatarra" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/botonRecolectar"
-                android:layout_width="118dp"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:text="Recolectar"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
