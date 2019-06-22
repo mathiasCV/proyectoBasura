@@ -20,15 +20,22 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    CheckBox checkPlastico, checkMetal, checkPapel, checkCarton;
-    Button bRecolectar;
-    ArrayList<Basura> listaPuntoBasura = new ArrayList<Basura>();
-    boolean plastico = true, metal = true, papel = true, carton = true;
+    private CheckBox checkPlastico, checkMetal, checkPapel, checkCarton;
+    private Button bRecolectar;
+    private ArrayList<Basura> listaPuntoBasura = new ArrayList<Basura>();
+
+    private static final String NOMBRE_ARCHIVO = "infoCiudadano.txt";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (!checkCarton.isChecked() && !checkMetal.isChecked() && !checkPapel.isChecked() && !checkPlastico.isChecked()){
                     Toast.makeText(getApplicationContext(), "Elige al menos una categoría para filtar.", Toast.LENGTH_SHORT).show();
                 }
+                cargarInformacion();
                 validar();
                 ponerMarcadores();
             }
@@ -65,23 +73,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter("MANDANDO_BASURA"));
+
         ponerMarcadores();
         Toast.makeText(getApplicationContext(), "Bienvenido", Toast.LENGTH_SHORT).show();
 
     }
 
-    public void ponerMarcadores(){
+    /*
+    Recorre el array con listaPuntoBasura y marca los puntos en el mapa
+     */
+    private void ponerMarcadores(){
         mMap.clear();
+        cargarInformacion();
         for (Basura lista: listaPuntoBasura) {
             if (lista.isFlag()) {
-                mMap.addMarker(new MarkerOptions().position(lista.getPunto()).title(lista.getTipo()+" "+Integer.toString(lista.getPeso())+" Kg").icon(BitmapDescriptorFactory.defaultMarker(lista.getColor())));
+                String title = null;
+                if (lista.getPeso()>0 && lista.getPeso() < 10){
+                    title = lista.getTipo()+" "+lista.getPeso()+" kg";
+                }else{
+                    title = lista.getPeso() < 1 ? lista.getTipo()+" 1 kg o menos" : lista.getTipo() + " 10 kg o más";
+                }
+                mMap.addMarker(new MarkerOptions().position(lista.getPunto()).title(title).icon(BitmapDescriptorFactory.defaultMarker(lista.getColor())));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(lista.getPunto()));
                 mMap.setMinZoomPreference(14);
             }
         }
     }
-    public void validar(){
+    /*
+    Verifica cuales items estan marcados en el checkBox
+    Si está marcado cambia el flag a true
+     */
+    private void validar(){
         boolean plastico, metal, papel, carton;
 
         plastico = checkPlastico.isChecked();
@@ -97,25 +119,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    /*
+    Leer el archivo y obtienes los datos para crear un objeto Basura
+    y lo agrega a la lista
+     */
+    private void cargarInformacion(){
+        FileInputStream fileInputStream = null;
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            LatLng punto = new LatLng(bundle.getDouble("lat") , bundle.getDouble("lng"));
-            listaPuntoBasura.add(new Basura( bundle.getString("tipo"), punto, bundle.getInt("peso")));
+        try {
+            fileInputStream = openFileInput(NOMBRE_ARCHIVO);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuilder stringBuilder = new StringBuilder();
+            String texto;
+
+            while ((texto = bufferedReader.readLine()) != null) {
+                stringBuilder.append(texto).append("\n");
+            }
+            String array[] = stringBuilder.toString().split("\n");
+            if (!array[0].equals("\n")){
+                listaPuntoBasura.add(new Basura(array[0], new LatLng(Double.parseDouble(array[1]), Double.parseDouble(array[2])), Integer.parseInt(array[3])));
+            }
+
+        }catch(Exception e){
+
+        }finally {
+            if (fileInputStream != null){
+                try {
+                    fileInputStream.close();
+                }catch (Exception e){
+                }
+            }
         }
-    };
-
-
+    }
 
 
     /*
         La función llena la lista de obj Basura, que son los puntos que muestra el mapa
        para simular una base de datos
        */
-    public void llenarLista(){
-       // listaPuntoBasura.add(new Basura("plastico", new LatLng(-33.035580, -71.626953),10));
+    private void llenarLista(){
+        listaPuntoBasura.add(new Basura("plastico", new LatLng(-33.035580, -71.626953),10));
         listaPuntoBasura.add(new Basura("metal", new LatLng(-33.044241, -71.620523),1));
         listaPuntoBasura.add(new Basura("papel", new LatLng(-33.043656, -71.622325),1));
         listaPuntoBasura.add(new Basura("carton",new LatLng(-33.046291, -71.621156),5));

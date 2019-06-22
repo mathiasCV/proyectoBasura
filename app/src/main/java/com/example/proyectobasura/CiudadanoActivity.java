@@ -39,21 +39,31 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.concurrent.ExecutionException;
+
 import dalvik.system.PathClassLoader;
 
 public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCallback {
     GoogleMap mMap;
+
     private RadioButton rPlastico, rMetal, rPapel, rCarton;
     private SeekBar seekbar;
-    private TextView textoSeekbar;
+    private TextView textoSeekbar, comprobar;
     private LatLng posicionActual;
     private Button btnMarcarPosicion, btnEnviar;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+
+    private static final float ZOOM = 17f;
+    private static final String NOMBRE_ARCHIVO = "infoCiudadano.txt";
 
     private boolean permisoUbicacion = false;
     private boolean marcaHecha = false;
 
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private static final float ZOOM = 17f;
 
 
     @Override
@@ -82,6 +92,7 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
             public void onClick(View v) {
                 try {
                     if (permisoUbicacion) {
+                        obtenerPosicionDispositivo();
                         marcarPosicion();
                     }
                 } catch (Exception e) {
@@ -120,24 +131,15 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
         });
         /*
         Listener botón enviar.
-        Crea un bundle con los datos necesarios para crear un objeto basura en MapActivity
-        Si el usuario marcó todos los campos los envía, sino muestra mensaje de error.
+        Crea un archivo con los datos necesarios para crear un objeto basura en MapActivity
+        Si el usuario marcó todos los campos lo crea, sino muestra mensaje de error.
          */
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(verificar()){
-                    Bundle bundle = new Bundle();
                     Basura nBasura = nuevaBasura();
-
-                    bundle.putString("tipo",nBasura.getTipo());
-                    bundle.putDouble("lat",nBasura.getPunto().latitude);
-                    bundle.putDouble("lng",nBasura.getPunto().longitude);
-                    bundle.putInt("peso",nBasura.getPeso());
-
-                    Intent intent = new Intent("MANDANDO_BASURA").putExtras(bundle);
-
-                    LocalBroadcastManager.getInstance(CiudadanoActivity.this).sendBroadcast(intent);
+                    guardarInformacion(nBasura);
                     Toast.makeText(CiudadanoActivity.this, "¡Enviado!", Toast.LENGTH_SHORT).show();
 
                 }else{
@@ -148,7 +150,7 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     /*
-    Obtiner permisos de ubicacion
+    Obtener permisos de ubicacion
     Verifica si los permisos para acceder al GPS están concedidos
     sino los pide.
     */
@@ -217,6 +219,7 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
     si no puede muestra mensaje de error.
      */
     public void marcarPosicion() {
+        mMap.clear();
         try {
             mMap.addMarker(new MarkerOptions().position(posicionActual).title("Tu posición"));
             moverCamara(posicionActual, ZOOM);
@@ -243,25 +246,51 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
      */
     private Basura nuevaBasura() {
         String tipo = new String();
-        LatLng punto = new LatLng(0, 0);
         int peso = seekbar.getProgress();
 
         if (rPlastico.isChecked()) { tipo = "plastico"; }
         if (rMetal.isChecked())    { tipo = "metal"; }
         if (rPapel.isChecked())    { tipo = "papel"; }
         if (rCarton.isChecked())   { tipo = "carton"; }
-        return new Basura(tipo, punto, peso);
+        return new Basura(tipo, posicionActual, peso);
     }
     /*
     Verifica que el usuario haya seleccionado todos los datos antes de instanciar un objeto Basura.
      */
     private boolean verificar(){
         boolean verif = false;
-        if(rPlastico.isChecked() || !rCarton.isChecked() || rPapel.isChecked() || rMetal.isChecked()){
+        if(rPlastico.isChecked() || rCarton.isChecked() || rPapel.isChecked() || rMetal.isChecked()){
             if (!textoSeekbar.getText().equals("Desliza para indicar el peso")){
                 if (marcaHecha){ verif = true; }
             }
         }
         return verif;
+    }
+
+    /*
+    Guarda la información del usuario en un archivo.
+    Crea archivo para guardar la información que el usuario marcó.
+    Si ya existe reemplaza el contenido viejo con el nuevo
+     */
+    private void guardarInformacion(Basura b){
+        String texto;
+        FileOutputStream fileOutputStream = null;
+
+        texto = b.getTipo() + "\n" + b.getPunto().latitude + "\n" + b.getPunto().longitude + "\n" + b.getPeso();
+        try{
+            fileOutputStream = openFileOutput(NOMBRE_ARCHIVO,MODE_PRIVATE);
+            fileOutputStream.write(texto.getBytes());
+            Toast.makeText(getApplicationContext(), "Guardado en "+ getFilesDir() + "/" + NOMBRE_ARCHIVO, Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), "No se puede abrir el archivo", Toast.LENGTH_SHORT).show();
+        }finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                }catch (IOException e){
+
+                }
+            }
+        }
     }
 }
