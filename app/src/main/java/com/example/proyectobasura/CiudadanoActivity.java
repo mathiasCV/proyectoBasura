@@ -92,8 +92,14 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
             public void onClick(View v) {
                 try {
                     if (permisoUbicacion) {
-                        obtenerPosicionDispositivo();
-                        marcarPosicion();
+                        final LocationManager locationManager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+                        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                            alertaGpsDesactivado();
+                        }else {
+                            obtenerPosicionDispositivo();
+                            marcarPosicion();
+                        }
                     }
                 } catch (Exception e) {
                     Toast.makeText(getApplicationContext(), "No fue posible marcar la posición", Toast.LENGTH_SHORT).show();
@@ -141,7 +147,6 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
                     Basura nBasura = nuevaBasura();
                     guardarInformacion(nBasura);
                     Toast.makeText(CiudadanoActivity.this, "¡Enviado!", Toast.LENGTH_SHORT).show();
-
                 }else{
                     Toast.makeText(CiudadanoActivity.this, "Primero debes marcar todos los campos", Toast.LENGTH_SHORT).show();
                 }
@@ -254,9 +259,11 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
         if (rCarton.isChecked())   { tipo = "carton"; }
         return new Basura(tipo, posicionActual, peso);
     }
+
     /*
     Verifica que el usuario haya seleccionado todos los datos antes de instanciar un objeto Basura.
      */
+
     private boolean verificar(){
         boolean verif = false;
         if(rPlastico.isChecked() || rCarton.isChecked() || rPapel.isChecked() || rMetal.isChecked()){
@@ -271,6 +278,9 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
     Guarda la información del usuario en un archivo.
     Crea archivo para guardar la información que el usuario marcó.
     Si ya existe reemplaza el contenido viejo con el nuevo
+
+    Parámetros
+        b: Objeto Basura para obtención de datos
      */
     private void guardarInformacion(Basura b){
         String texto;
@@ -280,7 +290,7 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
         try{
             fileOutputStream = openFileOutput(NOMBRE_ARCHIVO,MODE_PRIVATE);
             fileOutputStream.write(texto.getBytes());
-            Toast.makeText(getApplicationContext(), "Guardado en "+ getFilesDir() + "/" + NOMBRE_ARCHIVO, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Guardado en "+ getFilesDir() + "/" + NOMBRE_ARCHIVO, Toast.LENGTH_SHORT).show();
         }catch (Exception e){
             Toast.makeText(getApplicationContext(), "No se puede abrir el archivo", Toast.LENGTH_SHORT).show();
         }finally {
@@ -293,4 +303,28 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
             }
         }
     }
+
+    /*
+    Verifica si el GPS se encuentra activado o no
+    si no está activado le pregunta al usuario si desea activarlo
+    */
+    private void alertaGpsDesactivado() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Tenemos un problema...\nAl parecer el GPS está deactivado\n¿Deseas activarlo ahora?")
+                .setCancelable(false)
+                .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
 }
+
+

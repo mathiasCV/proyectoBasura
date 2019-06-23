@@ -1,12 +1,7 @@
 package com.example.proyectobasura;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,19 +17,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private CheckBox checkPlastico, checkMetal, checkPapel, checkCarton;
-    private Button bRecolectar;
+    private Button btnFiltrar, btnGenerarRuta;
     private ArrayList<Basura> listaPuntoBasura = new ArrayList<Basura>();
 
     private static final String NOMBRE_ARCHIVO = "infoCiudadano.txt";
+
+
 
 
     @Override
@@ -46,37 +42,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //Recivir datos de CiudadanoActivity
-
-
         //Instancia de botones
         checkPlastico = findViewById(R.id.opcionPlastico);
         checkCarton = findViewById(R.id.opcionCarton);
         checkMetal = findViewById(R.id.opcionMetal);
         checkPapel = findViewById(R.id.opcionPapel);
-        bRecolectar = findViewById(R.id.btnFiltrarMapa);
+        btnFiltrar = findViewById(R.id.btnFiltrarMapa);
+        btnGenerarRuta = findViewById(R.id.btnGenerarRuta);
         llenarLista();
-        bRecolectar.setOnClickListener(new View.OnClickListener() {
+
+        btnFiltrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!checkCarton.isChecked() && !checkMetal.isChecked() && !checkPapel.isChecked() && !checkPlastico.isChecked()){
+                if (!checkCarton.isChecked() && !checkMetal.isChecked() && !checkPapel.isChecked() && !checkPlastico.isChecked()) {
                     Toast.makeText(getApplicationContext(), "Elige al menos una categoría para filtar.", Toast.LENGTH_SHORT).show();
                 }
-                cargarInformacion();
-                validar();
                 ponerMarcadores();
             }
         });
+
+        btnGenerarRuta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MapsActivity.this, "No disponible... :(", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         ponerMarcadores();
         Toast.makeText(getApplicationContext(), "Bienvenido", Toast.LENGTH_SHORT).show();
-
     }
 
     /*
@@ -85,6 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ponerMarcadores(){
         mMap.clear();
         cargarInformacion();
+        validar();
         for (Basura lista: listaPuntoBasura) {
             if (lista.isFlag()) {
                 String title = null;
@@ -120,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     /*
-    Leer el archivo y obtienes los datos para crear un objeto Basura
+    Lee el archivo y obtiene los datos para crear un objeto Basura
     y lo agrega a la lista
      */
     private void cargarInformacion(){
@@ -140,10 +140,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (!array[0].equals("\n")){
                 listaPuntoBasura.add(new Basura(array[0], new LatLng(Double.parseDouble(array[1]), Double.parseDouble(array[2])), Integer.parseInt(array[3])));
             }
-
-        }catch(Exception e){
-
-        }finally {
+        }catch(Exception e){ }
+        finally {
             if (fileInputStream != null){
                 try {
                     fileInputStream.close();
@@ -152,12 +150,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
+    
 
     /*
-        La función llena la lista de obj Basura, que son los puntos que muestra el mapa
+       Llena la lista de objeto Basura, que son los puntos que muestra el mapa
        para simular una base de datos
-       */
+    */
     private void llenarLista(){
         listaPuntoBasura.add(new Basura("plastico", new LatLng(-33.035580, -71.626953),10));
         listaPuntoBasura.add(new Basura("metal", new LatLng(-33.044241, -71.620523),1));
@@ -181,4 +179,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listaPuntoBasura.add(new Basura("plastico",new LatLng(-33.038603, -71.628986),8));
         listaPuntoBasura.add(new Basura("metal",new LatLng(-33.037218, -71.627355),5));
     }
+
 }
