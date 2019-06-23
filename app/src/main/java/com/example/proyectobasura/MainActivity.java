@@ -25,15 +25,18 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onClick(View view){
         Intent intento = null;
+        final LocationManager locationManager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
         switch (view.getId()){
             case R.id.btnRecolector:
-                intento = new Intent(MainActivity.this,MapsActivity.class);
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    alertaGpsDesactivado();
+                }else {
+                    intento = new Intent(MainActivity.this,MapsActivity.class);
+                }
                 break;
 
             case R.id.btnCiudadano:
-                final LocationManager locationManager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
-
                 if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     alertaGpsDesactivado();
                 }else {
