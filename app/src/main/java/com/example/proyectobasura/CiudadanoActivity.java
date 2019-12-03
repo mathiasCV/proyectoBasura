@@ -52,7 +52,7 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
     GoogleMap mMap;
 
     private RadioButton rPlastico, rMetal, rPapel, rCarton;
-    private SeekBar seekbar;
+    public SeekBar seekbar;
     private TextView textoSeekbar, comprobar;
     private LatLng posicionActual;
     private Button btnMarcarPosicion, btnEnviar;
@@ -120,6 +120,8 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 cambioValor = progress;
+                getPesoSeekbar(getCambioValor());
+                System.out.println(getCambioValor());
             }
 
             @Override
@@ -133,6 +135,9 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
                     texto = cambioValor == 0 ? "Menos que 1 kg" : "10 kg o más";
                 textoSeekbar.setText(texto);
             }
+            public int getCambioValor(){
+                return cambioValor;
+            }
 
         });
         /*
@@ -143,7 +148,7 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(verificar()){
+                if(verificar(checkRadioButton(), checkSeekbar(), marcaHecha)){
                     Basura nBasura = nuevaBasura();
                     guardarInformacion(nBasura);
                     Toast.makeText(CiudadanoActivity.this, "¡Enviado!", Toast.LENGTH_SHORT).show();
@@ -153,7 +158,12 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
     }
-
+    /*
+    Funcion peso de basura
+    */
+    public int getPesoSeekbar(int peso){
+        return peso;
+    }
     /*
     Obtener permisos de ubicacion
     Verifica si los permisos para acceder al GPS están concedidos
@@ -264,16 +274,26 @@ public class CiudadanoActivity extends AppCompatActivity implements OnMapReadyCa
     Verifica que el usuario haya seleccionado todos los datos antes de instanciar un objeto Basura.
      */
 
-    private boolean verificar(){
-        boolean verif = false;
-        if(rPlastico.isChecked() || rCarton.isChecked() || rPapel.isChecked() || rMetal.isChecked()){
-            if (!textoSeekbar.getText().equals("Desliza para indicar el peso")){
-                if (marcaHecha){ verif = true; }
+    public boolean verificar(boolean rButton, boolean seekbar, boolean marcaHecha){
+
+        if(rButton && seekbar && marcaHecha){
+                return true;
             }
-        }
-        return verif;
+        return false;
     }
 
+    private boolean checkRadioButton() {
+        if (rPlastico.isChecked() || rCarton.isChecked() || rPapel.isChecked() || rMetal.isChecked()){
+            return true;
+        }
+        return false;
+    }
+    private boolean checkSeekbar(){
+        if(!textoSeekbar.getText().equals("Desliza para indicar el peso")){
+            return true;
+        }
+        else return false;
+    }
     /*
     Guarda la información del usuario en un archivo.
     Crea archivo para guardar la información que el usuario marcó.

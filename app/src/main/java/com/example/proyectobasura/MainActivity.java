@@ -94,9 +94,11 @@ public class MainActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 permisoUbicacion = true;
             } else {
+                permisoUbicacion = false;
                 ActivityCompat.requestPermissions(this, permissions, 1234);
             }
         } else {
+            permisoUbicacion = false;
             ActivityCompat.requestPermissions(this, permissions, 1234);
         }
     }

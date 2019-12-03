@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -57,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (!checkCarton.isChecked() && !checkMetal.isChecked() && !checkPapel.isChecked() && !checkPlastico.isChecked()) {
                     Toast.makeText(getApplicationContext(), "Elige al menos una categoría para filtar.", Toast.LENGTH_SHORT).show();
                 }
-                ponerMarcadores();
+                ponerMarcadores(validar(checkPlastico.isChecked(), checkMetal.isChecked(), checkPapel.isChecked(), checkCarton.isChecked()));
             }
         });
 
@@ -74,19 +75,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        ponerMarcadores();
+        ponerMarcadores(validar(checkPlastico.isChecked(), checkMetal.isChecked(), checkPapel.isChecked(), checkCarton.isChecked()));
         Toast.makeText(getApplicationContext(), "Bienvenido", Toast.LENGTH_SHORT).show();
     }
 
     /*
     Recorre el array con listaPuntoBasura y marca los puntos en el mapa
      */
-    private void ponerMarcadores(){
+    public void ponerMarcadores(ArrayList<Basura> basuraFiltrada){
         mMap.clear();
         cargarInformacion();
-        validar();
-        for (Basura lista: listaPuntoBasura) {
-            if (lista.isFlag()) {
+
+        for (Basura lista: basuraFiltrada) {
                 String title = null;
                 if (lista.getPeso()>0 && lista.getPeso() < 10){
                     title = lista.getTipo()+" "+lista.getPeso()+" kg";
@@ -97,26 +97,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(lista.getPunto()));
                 mMap.setMinZoomPreference(14);
             }
-        }
+        System.out.println(listaFiltrada(validar(checkPlastico.isChecked(), checkMetal.isChecked(), checkPapel.isChecked(), checkCarton.isChecked())));
     }
     /*
     Verifica cuales items estan marcados en el checkBox
     Si está marcado cambia el flag a true
      */
-    private void validar(){
-        boolean plastico, metal, papel, carton;
+    public int listaFiltrada(ArrayList<Basura> basuraFiltrada){
+        return basuraFiltrada.size();
+    }
+    public String listaVacia(ArrayList<Basura> basuraFiltrada){
+        if(basuraFiltrada.size() == 0) return "Elige al menos una categoría para filtar.";
+        return "fail";
+    }
+
+    public ArrayList<Basura> validar(boolean plastico, boolean metal, boolean papel, boolean carton){
+       /* boolean plastico, metal, papel, carton;
 
         plastico = checkPlastico.isChecked();
         metal = checkMetal.isChecked();
         papel = checkPapel.isChecked();
-        carton = checkCarton.isChecked();
+        carton = checkCarton.isChecked(); */
+        //cargarInformacion();
+        llenarLista();
+        ArrayList<Basura> basurasFiltradas = new ArrayList<Basura>();
 
+        /*
+            filtrado por tipo de basura
+            Se marca el flag para saber si esta marcado o no
+         */
         for (Basura lista: listaPuntoBasura){
             if(lista.getTipo().equals("plastico")) lista.setFlag(plastico);
             if(lista.getTipo().equals("metal")) lista.setFlag(metal);
             if(lista.getTipo().equals("papel")) lista.setFlag(papel);
             if(lista.getTipo().equals("carton")) lista.setFlag(carton);
         }
+
+        for (Basura lista: listaPuntoBasura){
+            if (lista.isFlag()){
+                basurasFiltradas.add(lista);
+            }
+        }
+        return basurasFiltradas;
     }
 
     /*
